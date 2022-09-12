@@ -44,7 +44,7 @@ steps:
   # [START cloudbuild_enable_cloud_run]
   # Deploy to Cloud Run
   - name: google/cloud-sdk
-    args: ['gcloud', 'enable', 'run.googleapis.com']
+    args: ['gcloud', 'services', 'enable', 'run.googleapis.com']
   # [END cloudbuild_enable_cloud_run]
   
   # [START cloudbuild_python_deploy_yaml]
