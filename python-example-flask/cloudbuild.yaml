@@ -40,7 +40,6 @@ steps:
     args: ['push',  'gcr.io/${PROJECT_ID}/myimage:${SHORT_SHA}']
   # [END cloudbuild_python_push_yaml]
   
-  gcloud services enable
   # [START cloudbuild_enable_cloud_run]
   # Deploy to Cloud Run
   - name: google/cloud-sdk
