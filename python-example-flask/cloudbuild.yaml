@@ -26,25 +26,34 @@ steps:
     entrypoint: python
     args: ["-m", "pytest", "--junitxml=${SHORT_SHA}_test_log.xml", "python-example-flask/"] 
   # [END cloudbuild_python_tests_yaml]
+  
+  # [START cloudbuild_artifact_repo_create]
+  # Docker Build
+  - name: 'google/cloud-sdk'
+    args: ['gcloud', 'artifacts', 'repositories', 'create', 'my-docker-repo', 
+           '--repository-format=docker',
+           '--location=us-central1', 
+           '--description="Docker repository"']
+  # [END cloudbuild_artifact_repo_create]
 
   # [START cloudbuild_python_image_yaml]
   # Docker Build
   - name: 'gcr.io/cloud-builders/docker'
     args: ['build', '-t', 
-           'us-docker.pkg.dev/${PROJECT_ID}/container/myimage:${SHORT_SHA}', 'python-example-flask/']
+           'us-central1-docker.pkg.dev/${PROJECT_ID}/my-docker-repo/myimage:${SHORT_SHA}', 'python-example-flask/']
   # [END cloudbuild_python_image_yaml]
 
   # [START cloudbuild_python_push_yaml]
   # Docker push to Google Artifact Registry
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['push',  'us-docker.pkg.dev/${PROJECT_ID}/container/myimage:${SHORT_SHA}']
+    args: ['push',  'us-central1-docker.pkg.dev/${PROJECT_ID}/my-docker-repo/myimage:${SHORT_SHA}']
   # [END cloudbuild_python_push_yaml]
   
   # [START cloudbuild_python_deploy_yaml]
   # Deploy to Cloud Run
   - name: google/cloud-sdk
     args: ['gcloud', 'run', 'deploy', 'helloworld-${SHORT_SHA}', 
-           '--image=us-docker.pkg.dev/${PROJECT_ID}/container/myimage:${SHORT_SHA}', 
+           '--image=us-central1-docker.pkg.dev/${PROJECT_ID}/my-docker-repo/myimage:${SHORT_SHA}', 
            '--region', 'us-central1', '--platform', 'managed', 
            '--allow-unauthenticated']
   # [END cloudbuild_python_deploy_yaml]
